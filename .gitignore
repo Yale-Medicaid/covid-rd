@@ -2,3 +2,5 @@
 *.pyc
 *.pkl
 *.DS_Store
+data/processed/private/excess_death_data.txt
+data/processed/private/RD_data_num_deaths_tot.txt

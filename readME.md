@@ -2,13 +2,12 @@
 
 
 Data replication ReadMe  for
-*Association Between Medicare Eligibility and Excess Deaths From COVID-19 in the US*
+*Association Between Medicare Eligibility and Excess Deaths From COVID-19 in the US*  
 Jacob Wallace, Anthony Lollo, Chima Ndumele, JAMA Health Forum
 
 ## Replication Code
 The programs for the main paper analyses are provide as `.py` files that need to be run in a python environment.
 
-Paths and directories should be set to a user's file paths.
 #### Required Packages and Versions
 The analysis was performed with the following libraries and versions, so to ensure reproducibility packages and versions should match.
 
@@ -48,9 +47,9 @@ Each file script should be run in the order it appears in this ReadMe, and we pr
 calculates the excess deaths for each 4-week period in 2020 as compared to 2015-2019 and outputs a simple Series to `'data\processed\public\NCHS_excess_deaths.pkl'`
 
 2. `process_private_raw.py`: These steps must be performed within the COVID-19 Research Database. These steps query raw data from the Mortality Database and construct monthly counts of death, by age in years, for the 2015-2019 period and the 2020 period. When the output files are approved for export by the COVID-19 Research Database team, they can be placed in `data\processed\private\` so that the following analytic steps can proceed.  
+  - First the replicator should run `query_and_clean_mortality_data` to query 2015-2020 data from the mortality Database, and perform basic data cleaning. The replicator will need to provide their own specific username, roles, and access codes specific to their project to be able to connect to the snowflake database.
 
-  First the replicator should run `query_and_clean_mortality_data` to query 2015-2020 data from the mortality Database, and perform basic data cleaning. The replicator will need to provide their own specific username, roles, and access codes specific to their project to be able to connect to the snowflake database.
+  - Next the replicator will run `create_excess_deaths` which will transform the DataFrame from `query_and_clean_mortality_data` into a Series of excess deaths in 2020. For the main analysis, the outcome parameter should be set to `'num_deaths_tot'`, sensitivity analyses looking at splits by gender can change this to `'num_deaths_M'`', or `'num_deaths_F'`'.  The replicator should
+  save the Series returned by this function as a comma delimited file named `'excess_death_data.txt'` then request to export this files out of the COVID-19 Research Database environment and can place it within the `data\processed\private\` folder to continue with the replication.
 
-  Next the replicator will run `create_RD_datasets` which will transform the data in the above step to a suitable format to run the regression discontinuity analyses. The replicator should then request to export these files out of the COVID-19 research database environment and can place them within the `data\processed\private\` folder to continue with the replication.
-
-3.
+  - Next the replicator will run `create_RD_table` which will transform the DataFrame from `query_and_clean_mortality_data` into the analytic table required for the regression discontinuity analysis. For the main analysis, the outcome parameter should be set to `'num_deaths_tot'`, sensitivity analyses looking at splits by gender can change this to `'num_deaths_M'`, or `'num_deaths_F'`. The replicator should save the DataFrame returned by this function as a  pipe-delimited (`'|'`) file named `'RD_data_num_deaths_tot.txt'` and request to export this file out of the COVID-19 Research Database environment. This file should be placed within `data\processed\private` to continue with the replication.
