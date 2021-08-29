@@ -34,11 +34,12 @@ def clean_raw_NCHS_data():
 				& df['Time Period'].eq('2020')]
 	           .groupby((df['Week']-1)//4)['Week Ending Date'].nth(1))
 
-	dates = pd.to_datetime(dates)
+	dates = pd.to_datetime(dates).rename('date')
 	s.index = dates
 
 	# 2020 has 53 weeks so we compare the 52 weeks in 2015-2019 with the 52 weeks in 2020
 	s = s[:13]
+	s = s.reset_index()
 
 	s.to_pickle(directory+'data/processed/public/NCHS_excess_deaths.pkl')
 
