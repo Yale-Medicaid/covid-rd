@@ -19,7 +19,7 @@ def clean_raw_NCHS_data():
     s = (df[df.Type.eq('Unweighted') & df['Jurisdiction'].eq('United States')]
            .groupby(['Time Period', 'Week', 'Age Group'])['Number of Deaths'].mean())
 
-    # To best-match CODID-19 Database, which is at the month level group every 4 weeks (~month). 
+    # To best-match CODID-19 Database, which is at the month level group every 4 weeks (~month) 
     s = s.groupby(['Time Period', (s.index.get_level_values('Week')-1)//4, 'Age Group']).sum()
 
     # Calculate % of Excess Deaths relative to 2015-2019 
@@ -39,7 +39,7 @@ def clean_raw_NCHS_data():
     s1 = s1.reset_index()
 
     # Sorted so will align
-    s1['deaths_2020']  =  s.xs('2020').xs('65-74 years', level=1).to_numpy()
+    s1['deaths_2020'] = s.xs('2020').xs('65-74 years', level=1).to_numpy()
     s1['deaths_1519'] = s.xs('2015-2019').xs('65-74 years', level=1)
 
     # 2020 has 53 weeks so we compare the 52 weeks in 2015-2019 with the 52 weeks in 2020

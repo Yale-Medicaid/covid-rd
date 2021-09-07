@@ -27,7 +27,7 @@ def query_and_clean_mortality_data(user, account, warehouse, role):
         exporting from the server. 
     """
 
-    # Connect to DataBase. 
+    # Connect to Database 
     ctx = snowflake.connector.connect(
             user=user,
             account=account,
@@ -45,11 +45,11 @@ def query_and_clean_mortality_data(user, account, warehouse, role):
     # Loop through relevant years and collect data
     l = []
     for year in range(2015, 2021):
-        # Query DataBase for all deaths in the year
+        # Query Database for all deaths in the year
         cs.execute(f'select {", ".join(selections)} frin "MORTALITY"."PUBLIC".DEATH_INDEX"' 
                    + f" WHERE (DATE_OF_DEATH >= '{year}-01-01' AND DATE_OF_DEATH < '{year+1}-01-01')")
 
-        # Put data in a DataFrame
+        # Create DataFrame
         data = cs.fetchall()
         df = pd.DataFrame(data, columns=[x[0] for x in cs.description])
         df.columns = df.columns.str.lower()
@@ -58,7 +58,7 @@ def query_and_clean_mortality_data(user, account, warehouse, role):
         df['gender_probability_score'] = pd.to_numeric(df['gender_probability_score'])
         df = dedup_records(df)
 
-        # Convert to `datetime64[ns]
+        # Convert to `datetime64[ns]`
         for col in ['date_of_birth', 'date_of_death']:
             df[col] = pd.to_datetime(df[col])
 
@@ -91,7 +91,7 @@ def query_and_clean_mortality_data(user, account, warehouse, role):
 
 
 def create_excess_deaths(df, outcome='num_deaths_tot'):
-    	"""
+    """
     Transforms preliminary cleaned data from the mortality database into the analytic table
     of excess deaths for individuals 65-74 years old in 2020 relative to 2015-2019
 
@@ -120,7 +120,7 @@ def create_excess_deaths(df, outcome='num_deaths_tot'):
     # Look for excess deahts among [65, 74)
     age_rng = (65, 74)
 
-    # Subset ot age ranges and get total deaths per month of the year. 
+    # Subset ot age ranges and get total deaths per month of the year 
     s2020 = s2020[(s2020.index.get_level_values('age_in_mos') >= age_rng[0]*12)
                    & (s2020.index.get_level_values('age_in_mos') < age_rng[1]*12)]
     s2020 = s2020.groupby(level='month').sum()
@@ -130,14 +130,14 @@ def create_excess_deaths(df, outcome='num_deaths_tot'):
     # Get total deaths, then divide by 5 to get average per year between 2015-2019
     s1519 = s1519.groupby(level='month').sum().div(5)
 
-    # Create Excess Deaths. Set date to be the middle of the month.
+    # Create Excess Deaths. Set date to be the middle of the month
     res = (s2020 - s1519).div(s1519).mul(100)
     res.index = pd.to_datetime([f'2020-{month}-15' for month in res.index])
 
     # Rename so saving as a csv has proper names
     res = res.rename_axis(index='date').rename('excess_deaths').reset_index()
 
-    # Sorted so will align properly. 
+    # Sorted so will align properly 
     res['deaths_2020'] = s2020.to_numpy()
     res['deaths_1519'] = s1519.to_numpy()
 
@@ -154,7 +154,7 @@ def create_RD_table(df, outcome='num_deaths_tot'):
     df : pd.DataFrame
         Output from query_and_clean_mortality_data
     outcome : str, default 'num_deaths_tot', {'num_deaths_tot', 'num_deaths_M', 'num_deaths_F'}
-    	Specifies which grouping of deaths to consider and calculate excss deaths for
+        Specifies which grouping of deaths to consider and calculate excss deaths for
 
     Return
     ------
@@ -170,7 +170,7 @@ def create_RD_table(df, outcome='num_deaths_tot'):
     # BWs for RD around age 65
     for age_rng in [(59, 71), (61, 69), (63, 67)]:
 
-        # We need to compare March:Dec 2015-2019 with March:Dec 2020
+        # Compare March:Dec 2015-2019 with March:Dec 2020
         grpr = (df[(df.date_of_death.between('2015-01-01', '2019-12-31')
                     & df.date_of_death.dt.month.between(3, 12))
                    | df.date_of_death.between('2020-03-01', '2020-12-31')]

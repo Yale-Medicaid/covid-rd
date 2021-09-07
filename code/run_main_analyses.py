@@ -11,7 +11,7 @@ from statsmodels.formula.api import ols
 def create_excess_death_figure():
     """
     Create Figure 1 of manuscript illustrating excess deaths in 2020 relative to 2015-2019 and
-    using COVID-19 Research Database and NCHS Data
+    using COVID-19 Research Database and NCHS Data.
     """
 
     directory = (((os.path.dirname(os.path.dirname(os.path.realpath(__file__)))).replace('\\', '/')) 
@@ -20,7 +20,7 @@ def create_excess_death_figure():
     dfnchs = pd.read_pickle(directory+'data/processed/public/NCHS_excess_deaths.pkl')
     dfdata = pd.read_csv(directory+'data/processed/private/excess_death_data.txt')
 
-    # Since was exported to .txt need to re-cast to datetime. 
+    # Since was exported to .txt need to re-cast to datetime 
     dfdata['date'] = pd.to_datetime(dfdata['date'])
 
     fig,ax = plt.subplots(figsize=(8, 6))
@@ -37,7 +37,7 @@ def create_excess_death_figure():
 
     ax.axhline(0, 0, 1, color='black', lw=1.3)
 
-    # Change tick labels to Month abbreviations. 
+    # Change tick labels to Month abbreviations 
     ticks_loc = ax.get_xticks().tolist()
     ax.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
     ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 
@@ -53,7 +53,7 @@ def create_rd_figure(outcome='num_deaths_tot', bw='(61, 69)'):
     """
     Create Figure 2 of manuscript showing the RD estimate for the main specification used in the 
     manuscript. The outcome can be changed to deaths for men and women if those outcomes were also
-    created within the COVID-19 Research Database
+    created within the COVID-19 Research Database.
 
     Params
     ------
@@ -71,7 +71,7 @@ def create_rd_figure(outcome='num_deaths_tot', bw='(61, 69)'):
     # Main specification used 61-69 bandwidth
     df = df[df.age_rng.eq(bw)]
 
-    # Plotting colors and text locations. 
+    # Plotting colors and text locations
     cd = {'2020': '#1f77b4', '2015 - 2019': '#ff7f0e'}
     sd = {'2020': {'x': 61, 'y': 9300}, '2015 - 2019': {'x': 66.1, 'y': 6900}}
 
@@ -89,7 +89,7 @@ def create_rd_figure(outcome='num_deaths_tot', bw='(61, 69)'):
                            ' + np.power(age_in_mos_rel65, 2) + np.power(age_in_mos_rel65, 2) * ge65'),
                   data=gp)
 
-        # Looking at `res.summary()` will show full regression table. 
+        # Looking at `res.summary()` will show full regression table 
         res = mod.fit(cov_type='HC1', use_t=True)
         
         # For plotting each side of the RD separately
@@ -147,7 +147,7 @@ def calc_maunscript_numbers():
 
     directory = (((os.path.dirname(os.path.dirname(os.path.realpath(__file__)))).replace('\\', '/')) 
 
-    # Deaths Total, Male and Female among 61-69 years olds in study period. 
+    # Deaths Total, Male and Female among 61-69 years olds in study period
     for suff in ['tot', 'M', 'F']:
         df = pd.read_csv(directory+f'data/processed/private/RD_data_num_deaths_{suff}.txt',
                          sep='|')
