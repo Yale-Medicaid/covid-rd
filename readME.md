@@ -2,7 +2,7 @@
 
 
 Data replication ReadMe  for
-*Association Between Medicare Eligibility and Excess Deaths From COVID-19 in the US*  
+*Evaluation of the Association Between Medicare Eligibility and Excess Deaths During the COVID-19 Pandemic in the US*  
 Jacob Wallace, Anthony Lollo, Chima Ndumele, JAMA Health Forum
 
 ## Replication Code
@@ -54,4 +54,4 @@ calculates the excess deaths for each 4-week period in 2020 as compared to 2015-
 
   - Next the replicator will run `create_RD_table` which will transform the DataFrame from `query_and_clean_mortality_data` into the analytic table required for the regression discontinuity analysis. For the main analysis, the outcome parameter should be set to `'num_deaths_tot'`. To replicate sensitivity analyses looking at splits by gender can this shold be changed to `'num_deaths_M'`, or `'num_deaths_F'`. The replicator should save the DataFrame returned by this function as a  pipe-delimited (`'|'`) files named `'RD_data_num_deaths_tot.txt'`, `'RD_data_num_deaths_F.txt'`, and  `'RD_data_num_deaths_M.txt'` and request to export these file out of the COVID-19 Research Database environment. This file should be placed within `data\processed\private` to continue with the replication.
 
-3. `run_main_analyses.py`: Takes as input files from `data\processed\` and reproduces the main tables and estimates of the manuscript. Within this script are two functions. `create_excess_death_figure` will create the first figure of the manuscript and `create_rd_figure` will run the regression discontinuity specification and produce figure 2 of the manuscript. The figures will be output to `data\output\`. If the replicator seeks additional information regarding the RD estimates they should inspect `res.summary()`, the result of the RD model run within `create_rd_figure`. `calc_maunscript_numbers` will calculate numbers, like total number of deaths, also split by gender, which are reported in the text of the manuscript. 
+3. `run_main_analyses.py`: Takes as input files from `data\processed\` and reproduces the main tables and estimates of the manuscript. Within this script are two functions. `create_excess_death_figure` will create the first figure of the manuscript and `create_rd_figure` will run the regression discontinuity specification and produce figure 2 of the manuscript. The figures will be output to `data\output\`. If the replicator seeks additional information regarding the RD estimates they should inspect `res.summary()`, the result of the RD model run within `create_rd_figure`. `calc_maunscript_numbers` will calculate numbers, like total number of deaths, also split by gender, which are reported in the text of the manuscript.
