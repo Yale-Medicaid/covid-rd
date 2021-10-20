@@ -46,7 +46,7 @@ def query_and_clean_mortality_data(user, account, warehouse, role):
     l = []
     for year in range(2015, 2021):
         # Query Database for all deaths in the year
-        cs.execute(f'select {", ".join(selections)} frin "MORTALITY"."PUBLIC".DEATH_INDEX"' 
+        cs.execute(f'select {", ".join(selections)} from "MORTALITY"."PUBLIC".DEATH_INDEX"' 
                    + f" WHERE (DATE_OF_DEATH >= '{year}-01-01' AND DATE_OF_DEATH < '{year+1}-01-01')")
 
         # Create DataFrame
